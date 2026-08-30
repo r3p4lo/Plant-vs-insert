@@ -15,6 +15,7 @@ import type { SaveData, Settings } from "./game/save";
 import { audio } from "./game/audio";
 import { UNIT_MAP, MAX_UPGRADE, upgradeCost } from "./game/data";
 import type { EndResult } from "./game/engine";
+import { drawUnitShape } from "./game/engine";
 
 type ScreenId = "splash" | "menu" | "levels" | "collection" | "settings" | "game";
 
@@ -23,6 +24,88 @@ export default function App() {
   const [save, setSave] = useState<SaveData>(() => loadSave());
   const [levelNum, setLevelNum] = useState(1);
   const [gameKey, setGameKey] = useState(0);
+
+  // ---- PWA: pasang sebagai aplikasi (Android: "Tambahkan ke layar utama") ----
+  const [installEvt, setInstallEvt] = useState<Event | null>(null);
+  const [installed, setInstalled] = useState(
+    () =>
+      window.matchMedia?.("(display-mode: standalone)").matches ||
+      (navigator as unknown as { standalone?: boolean }).standalone === true
+  );
+  useEffect(() => {
+    const onPrompt = (e: Event) => {
+      e.preventDefault();
+      setInstallEvt(e);
+    };
+    const onInstalled = () => {
+      setInstalled(true);
+      setInstallEvt(null);
+    };
+    window.addEventListener("beforeinstallprompt", onPrompt);
+    window.addEventListener("appinstalled", onInstalled);
+    return () => {
+      window.removeEventListener("beforeinstallprompt", onPrompt);
+      window.removeEventListener("appinstalled", onInstalled);
+    };
+  }, []);
+  const triggerInstall = useCallback(() => {
+    const evt = installEvt as unknown as { prompt?: () => void; userChoice?: Promise<unknown> } | null;
+    if (evt?.prompt) {
+      evt.prompt();
+      evt.userChoice?.then(() => setInstallEvt(null)).catch(() => {});
+    }
+  }, [installEvt]);
+
+  // Render ikon aplikasi secara prosedural (100% original) → favicon & ikon layar utama
+  useEffect(() => {
+    try {
+      const c = document.createElement("canvas");
+      c.width = 256;
+      c.height = 256;
+      const ctx = c.getContext("2d");
+      if (!ctx) return;
+      const g = ctx.createRadialGradient(128, 104, 24, 128, 128, 195);
+      g.addColorStop(0, "#ffe98a");
+      g.addColorStop(0.55, "#ffd23f");
+      g.addColorStop(1, "#f0a51b");
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      if (typeof ctx.roundRect === "function") ctx.roundRect(0, 0, 256, 256, 46);
+      else ctx.rect(0, 0, 256, 256);
+      ctx.fill();
+      ctx.save();
+      ctx.translate(128, 114);
+      ctx.fillStyle = "rgba(255,255,255,0.2)";
+      for (let i = 0; i < 12; i++) {
+        ctx.rotate(Math.PI / 6);
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(180, -19);
+        ctx.lineTo(180, 19);
+        ctx.closePath();
+        ctx.fill();
+      }
+      ctx.restore();
+      ctx.fillStyle = "rgba(0,0,0,0.15)";
+      ctx.beginPath();
+      ctx.ellipse(128, 234, 86, 15, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.save();
+      ctx.beginPath();
+      if (typeof ctx.roundRect === "function") ctx.roundRect(0, 0, 256, 256, 46);
+      else ctx.rect(0, 0, 256, 256);
+      ctx.clip();
+      drawUnitShape(ctx, UNIT_MAP.seedling, 128, 188, 1.9, 1.4, { hpFrac: 1 });
+      ctx.restore();
+      const url = c.toDataURL("image/png");
+      const fav = document.querySelector<HTMLLinkElement>('link[rel="icon"]');
+      if (fav) fav.href = url;
+      const at = document.querySelector<HTMLLinkElement>('link[rel="apple-touch-icon"]');
+      if (at) at.href = url;
+    } catch {
+      /* ikon prosedural opsional */
+    }
+  }, []);
 
   // buka AudioContext pada gestur pertama + mulai musik
   useEffect(() => {
@@ -107,6 +190,9 @@ export default function App() {
           onPlay={() => setScreen("levels")}
           onCollection={() => setScreen("collection")}
           onSettings={() => setScreen("settings")}
+          canInstall={!!installEvt && !installed}
+          onInstall={triggerInstall}
+          isStandalone={installed}
         />
       )}
       {screen === "levels" && <LevelSelect save={save} onBack={() => setScreen("menu")} onPick={startLevel} />}

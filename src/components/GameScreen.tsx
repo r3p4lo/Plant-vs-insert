@@ -46,6 +46,19 @@ export default function GameScreen({
   const [tutorial, setTutorial] = useState(!save.seenTutorial && levelNum === 1);
   const [portrait] = useState(() => window.innerHeight > window.innerWidth * 1.05);
 
+  // rasa aplikasi native: layar penuh + kunci orientasi landscape (perangkat sentuh)
+  useEffect(() => {
+    const touch = window.matchMedia("(pointer: coarse)").matches;
+    const el = document.documentElement;
+    if (touch && el.requestFullscreen) el.requestFullscreen().catch(() => {});
+    try {
+      const o = screen.orientation as unknown as { lock?: (m: string) => Promise<void> };
+      if (touch && o?.lock) o.lock("landscape").catch(() => {});
+    } catch {
+      /* kunci orientasi tidak didukung — abaikan */
+    }
+  }, []);
+
   const levelDef = useMemo(() => makeLevel(levelNum, save.playerLv), [levelNum, save.playerLv]);
 
   useEffect(() => {
@@ -81,7 +94,7 @@ export default function GameScreen({
       {hud && (
         <>
           {/* ===== HUD atas ===== */}
-          <div className="absolute inset-x-0 top-0 z-20 flex items-center gap-1.5 sm:gap-2 p-2 flex-wrap pointer-events-none">
+          <div className="absolute inset-x-0 top-0 z-20 flex items-center gap-1.5 sm:gap-2 gg-safe-top flex-wrap pointer-events-none">
             <div className="hud-chip flex items-center gap-1.5 px-2 py-1.5 pointer-events-auto">
               <HeartIcon size={18} />
               <div className="w-16 sm:w-24 h-3.5 rounded-full bg-black/55 border border-white/20 overflow-hidden">
@@ -220,7 +233,7 @@ export default function GameScreen({
 
           {/* ===== Panel kartu unit ===== */}
           {!end && (
-            <div className="absolute inset-x-0 bottom-0 z-20 p-1.5 sm:p-2">
+            <div className="absolute inset-x-0 bottom-0 z-20 gg-safe-bottom">
               <div className="flex gap-1.5 sm:gap-2 overflow-x-auto hide-scroll justify-start sm:justify-center pb-0.5">
                 {hud.cards.map((c) => {
                   const def = UNIT_MAP[c.id];

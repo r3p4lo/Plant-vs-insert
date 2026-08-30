@@ -1,0 +1,22 @@
+{
+  "name": "Garden Guardians — Tower Defense",
+  "short_name": "Garden Guardians",
+  "description": "Pertahankan kebunmu dari serbuan monster! Game tower defense original dengan 8 penjaga, 16 monster, dan 5 boss.",
+  "lang": "id",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "background_color": "#123d1c",
+  "theme_color": "#2e7d32",
+  "categories": ["games", "entertainment"],
+  "icons": [
+    {
+      "src": "icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -162,6 +162,23 @@ export function SkullIcon({ size = 44 }: { size?: number }) {
     </svg>
   );
 }
+export function DownloadIcon({ size = 18 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24">
+      <path d="M12 3v11m0 0 4.5-4.5M12 14 7.5 9.5" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" />
+    </svg>
+  );
+}
+export function PhoneIcon({ size = 18 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24">
+      <rect x="6.5" y="2.5" width="11" height="19" rx="3" fill="none" stroke="currentColor" strokeWidth="2.2" />
+      <path d="M10.5 5h3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      <circle cx="12" cy="18" r="1.4" fill="currentColor" />
+    </svg>
+  );
+}
 export function LeafBadge({ size = 22 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24">
@@ -230,11 +247,17 @@ export function MainMenu({
   onPlay,
   onCollection,
   onSettings,
+  canInstall,
+  onInstall,
+  isStandalone,
 }: {
   save: SaveData;
   onPlay: () => void;
   onCollection: () => void;
   onSettings: () => void;
+  canInstall: boolean;
+  onInstall: () => void;
+  isStandalone: boolean;
 }) {
   return (
     <div className="relative h-full w-full overflow-hidden" style={{ background: "linear-gradient(180deg,#5db9ec 0%,#a5e0fb 55%,#c9edff 100%)" }}>
@@ -295,6 +318,16 @@ export function MainMenu({
           <GButton color="wood" onClick={onSettings}>
             PENGATURAN
           </GButton>
+          {canInstall && (
+            <GButton color="blue" onClick={onInstall} className="shine">
+              <DownloadIcon size={20} /> PASANG APLIKASI
+            </GButton>
+          )}
+          {isStandalone && (
+            <div className="hud-chip px-4 py-2 flex items-center justify-center gap-2 text-[#a8dd8a] font-display text-sm">
+              <PhoneIcon size={18} /> MODE APLIKASI AKTIF
+            </div>
+          )}
         </div>
 
         <div className="mt-8 flex gap-3">
