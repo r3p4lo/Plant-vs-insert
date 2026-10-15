@@ -48,24 +48,14 @@ Untuk APK release (siap Play Store / sideload):
 
 cd android
 ./gradlew assembleRelease
-# tandatangani dengan keystore Anda (konfigurasi signingConfigs di android/app/build.gradle)
-Kustomisasi
-Ganti nama aplikasi / package ID: edit capacitor.config.ts, lalu npx cap sync android.
-Ikon & splash screen Android: pasang @capacitor/assets lalu jalankan npx capacitor-assets generate --android (atau ganti manual di android/app/src/main/res/).
-Ikon launcher bawaan dapat memakai gambar apa pun yang original — ikon web game dirender prosedural dan dapat diekspor dari browser (canvas 512×512).
-Struktur Proyek
-index.html                 — shell PWA (manifest, meta app, font original)
-public/manifest.webmanifest— definisi aplikasi (ikon, orientasi, fullscreen)
-public/sw.js               — Service Worker offline
-public/icons/icon.svg      — ikon aplikasi vektor original
-capacitor.config.ts        — konfigurasi pembungkus APK Android
-src/game/data.ts           — 8 unit, 11 monster, 5 boss, generator level tanpa batas
-src/game/engine.ts         — mesin canvas: grid, wave, boss, pooling, partikel
-src/game/audio.ts          — musik & SFX original disintesis WebAudio
-src/game/save.ts           — save otomatis (localStorage; di WebView Android tetap persisten)
-src/components/*.tsx       — UI: menu, koleksi/upgrade, pengaturan, HUD sentuh
-Catatan Performa Android Kelas Bawah
-Object pooling untuk proyektil, monster, partikel, dan teks melayang.
-Semua grafik digambar vektor di canvas (tanpa tekstur besar, RAM kecil).
-devicePixelRatio dibatasi 2×; partikel & monster dibatasi jumlah maksimum.
-Satu canvas, satu loop requestAnimationFrame, HUD React diperbarui 8×/detik.
+# uji coba game
+game bisa di coba melalui
+https://drive.google.com/file/d/1BVYfeXEsyHGyOxdgmfLrxG658pVqchcE/view?usp=drivesdk
+
+
+KAMI KELAS 11 RPL 1 KELOMPOK 7 MENGUCAPKAN TERIMAKASIH KARENA SUDAH DI BERIKAN ILMU DAN KEPERCAYAAN UNTUK MEMBUAT GAME INI SAMPAI BENAR BENAR MENJADI APK
+KELOMPOK 7
+REVA DWI PRASETIA 
+DANIS PUTRA LAKSMANA
+RAKA WIDODO 
+FATUR RACHMAN NUR ADITYA 
